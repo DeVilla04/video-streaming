@@ -1,0 +1,91 @@
+<!-- <html>
+<head>
+  <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+  <script src="https://unpkg.com/video.js/dist/video.js"></script>
+</head>
+<body>
+  <video id="video" class="video-js" controls preload="auto" width="640" height="264">
+    <source src="http://localhost:3030/video" type="video/mp4">
+  </video>
+</body>
+<script>
+  const player = videojs('video');
+</script>
+</html> -->
+
+
+<html>
+<head>
+  <title>Video Upload and Streaming Example</title>
+</head>
+<body>
+  <h1>Video Upload and Streaming Example</h1>
+  <form>
+    <input type="file" id="video-file-input">
+    <button type="submit" id="upload-button">Upload</button>
+  </form>
+  <hr>
+  <h2>Stream Video</h2>
+  <video id="video-stream" width="640" height="480" controls></video>
+  <button id="stream-button">Stream Video</button>
+  <hr>
+  <h2>Download Video</h2>
+  <button id="download-button">Download Video</button>
+</body>
+<script>
+  const uploadButton = document.getElementById('upload-button');
+  const videoFileInput = document.getElementById('video-file-input');
+  const streamButton = document.getElementById('stream-button');
+  const downloadButton = document.getElementById('download-button');
+  const videoStream = document.getElementById('video-stream');
+
+  uploadButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('video', videoFileInput.files[0]);
+
+    const response = await fetch('http://localhost:3030/video/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.ok) {
+      alert('Video uploaded successfully');
+    } else {
+      alert('Error uploading video');
+    }
+  });
+
+  streamButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const response = await fetch('http://localhost:3030/video/stream/cute-cat-3921.mp4');
+
+    if (response.ok) {
+      const videoBlob = await response.blob();
+      const videoUrl = URL.createObjectURL(videoBlob);
+      videoStream.src = videoUrl;
+      videoStream.play();
+    } else {
+      alert('Error streaming video');
+    }
+  });
+
+  downloadButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const response = await fetch('http://localhost:3030/video/download/cute-cat-3921.mp4');
+
+    if (response.ok) {
+      const videoBlob = await response.blob();
+      const videoUrl = URL.createObjectURL(videoBlob);
+      const a = document.createElement('a');
+      a.href = videoUrl;
+      a.download = 'video.mp4';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      alert('Error downloading video');
+    }
+  });
+</script>
+</html>
