@@ -81,7 +81,7 @@ const downloadVideo = (req, res) => {
       console.log(err);
       return res.status(400).json("Error downloading file");
     }
-    res.status(200).json("File downloaded successfully");
+    // res.status(200).json("File downloaded successfully");
   });
 };
 
